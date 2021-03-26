@@ -94,7 +94,9 @@
             item-key="order"
           >
             <template #item="{ element }">
-              <Site :item="element" @dragstart="startDrag($event, element)" />
+              <div @dragstart="startDrag($event, element)">
+              <Site :item="element"  />
+              </div>
             </template>
           </draggable>
 
@@ -129,7 +131,9 @@
               item-key="order"
             >
               <template #item="{ element }">
-                <Site :item="element" @dragstart="startDrag($event, element)" />
+              <div @dragstart="startDrag($event, element)">
+                <Site :item="element" />
+                </div>
               </template>
             </draggable>
           </div>
@@ -177,25 +181,20 @@ export default {
     Folder,
     Site,
   },
-  data() {
-    return {
-      list1: [
-        { title: "John", id: 1 },
-        { title: "Joao", id: 2 },
-        { title: "Jean", id: 3 },
-        { title: "Gerard", id: 4 },
-      ],
-      list2: [
-        { title: "Juan", id: 5 },
-        { title: "Edgard", id: 6 },
-        { title: "Johnson", id: 7 },
-      ],
-      list: [{ title: "John", id: 1 }],
-    };
-  },
 
   setup() {
-    const dragOptions = computed(() => {
+    
+    const Display = ref("flex");
+    const items = ref([]);
+    // const List = ref([
+    //   { id: 7, title: "My Site 7", description: "Not Published" },
+    // ]);
+    const { response, error } = useFetch("http://localhost:3000/Items");
+    items.value = response.value;
+    const log = (evt) => {
+      window.console.log(evt);
+    };
+       const dragOptions = computed(() => {
       return {
         animation: 200,
         group: "description",
@@ -204,42 +203,8 @@ export default {
       };
     });
 
-    const { response, error } = useFetch("http://localhost:3000/Items");
-    const Display = ref("flex");
-    const items = ref([]);
-    const List = ref([
-      { id: 7, title: "My Site 7", description: "Not Published" },
-    ]);
-    items.value = response.value;
-    console.log("fiahfiahfea", items.value);
-
-    let add = () => {
-      this.list.push({ title: "Juan" });
-    };
-
-    let replace = () => {
-      this.list = [{ title: "Edgard" }];
-    };
-
-    let clone = (el) => {
-      return {
-        name: el.title + " cloned",
-      };
-    };
-
-    const log = (evt) => {
-      window.console.log(evt);
-    };
-
-    //  const  cloneDog=({ id }) =>{
-    //     return {
-    //       id: idGlobal++,
-    //       name: `cat ${id}`
-    //     };
-    //   }
 
     const startDrag = (event, item) => {
-      console.log("item id is ", item.id);
       event.dataTransfer.dropEffect = "move";
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("itemID", item.id);
@@ -260,10 +225,11 @@ export default {
     const onDelete = (event, fromList) => {
       const itemID = event.dataTransfer.getData("itemID");
       const item = fromList.find((item) => item.id == itemID);
+      if(item){
       fromList.splice(fromList.indexOf(item), 1);
       axios
         .post("http://localhost:3000/Folders", {
-          id: item.id,
+         id:item.id,
           title: item.title,
           description: "New val",
         })
@@ -273,24 +239,19 @@ export default {
         .catch((error) => {
           console.log("error is ", error);
         });
+      }
     };
 
-    // }
-    // const AddFolder = ()=>{
-    //    items.value.value.push({id:10,title:"My site 10" ,description:"Not Published "})
-    // console.log("all items are",items.value.value)
-    //  }
     return {
       Display,
       items,
       response,
-
-      List,
+      
       error,
       log,
-      add,
-      replace,
-      clone,
+      
+
+      
       startDrag,
       onDelete,
       dragOptions,

@@ -2,7 +2,7 @@
  <!-- @click="item.fixed = !item.fixed" -->
   <div
     :class="item.fixed ? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin mb-6'"
-    
+    @click="item.fixed = !item.fixed" 
     aria-hidden="true"
   >
     <button
