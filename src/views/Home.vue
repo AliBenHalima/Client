@@ -73,9 +73,6 @@
             <div class=" ">
               <Folder title="9:16" />
             </div>
-            <!-- <div><button @click="AddFolder" class="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-              Add Folder
-              </button></div> -->
           </div>
 
           <draggable
@@ -95,27 +92,15 @@
           >
             <template #item="{ element }">
               <div @dragstart="startDrag($event, element)">
-              <Site :item="element"  />
+                <Site :item="element" />
               </div>
             </template>
           </draggable>
-
-          <!-- <div v-for="item in items.value" :key="item" class="mr-2 mb-2"  draggable="true" @dragstart="startDrag($event,item)" @dragenter.prevent @dragover.prevent>
-              <Site :item="item" />
-            </div> -->
-
-          <!-- <div @drop="onDrop($event,items.value,List)" v-for="element in List" :key="element" class="mr-2 mb-2  bg-yellow-400" draggable="true"  @dragstart="startDrag($event,element)" @dragenter.prevent @dragover.prevent>
-          <p class="min-h-0 bg-yellow-400">  {{element.title}} </p>
-            </div> -->
 
           <div
             v-if="Display == 'flex'"
             class="ml-6 mt-6 flex flex-col justify-start overflow-auto h-auto"
           >
-            <!-- <div v-for="item in items.value" :key="item.id" class="mr-4 mb-2">
-              <Site :item="item" />
-            </div> -->
-
             <draggable
               class="list-group"
               tag="transition-group"
@@ -131,29 +116,12 @@
               item-key="order"
             >
               <template #item="{ element }">
-              <div @dragstart="startDrag($event, element)">
-                <Site :item="element" />
+                <div @dragstart="startDrag($event, element)">
+                  <Site :item="element" />
                 </div>
               </template>
             </draggable>
           </div>
-
-          <!-- <div class="col-3">
-      <h3>Draggable 2</h3>
-      <draggable
-        class="list-group"
-        :list="list2"
-        group="people"
-        @change="log"
-        itemKey="name"
-      >
-        <template #item="{ element, index }">
-          <div class="list-group-item">{{ element.title }} {{ index }}</div>
-        </template>
-      </draggable>
-
-          </div> -->
-          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -183,18 +151,15 @@ export default {
   },
 
   setup() {
-    
     const Display = ref("flex");
     const items = ref([]);
-    // const List = ref([
-    //   { id: 7, title: "My Site 7", description: "Not Published" },
-    // ]);
+
     const { response, error } = useFetch("http://localhost:3000/Items");
     items.value = response.value;
     const log = (evt) => {
       window.console.log(evt);
     };
-       const dragOptions = computed(() => {
+    const dragOptions = computed(() => {
       return {
         animation: 200,
         group: "description",
@@ -202,7 +167,6 @@ export default {
         ghostClass: "ghost",
       };
     });
-
 
     const startDrag = (event, item) => {
       event.dataTransfer.dropEffect = "move";
@@ -225,20 +189,20 @@ export default {
     const onDelete = (event, fromList) => {
       const itemID = event.dataTransfer.getData("itemID");
       const item = fromList.find((item) => item.id == itemID);
-      if(item){
-      fromList.splice(fromList.indexOf(item), 1);
-      axios
-        .post("http://localhost:3000/Folders", {
-         id:item.id,
-          title: item.title,
-          description: "New val",
-        })
-        .then((resp) => {
-          console.log("data is ", resp);
-        })
-        .catch((error) => {
-          console.log("error is ", error);
-        });
+      if (item) {
+        fromList.splice(fromList.indexOf(item), 1);
+        axios
+          .post("http://localhost:3000/Folders", {
+            id: item.id,
+            title: item.title,
+            description: "New val",
+          })
+          .then((resp) => {
+            console.log("data is ", resp);
+          })
+          .catch((error) => {
+            console.log("error is ", error);
+          });
       }
     };
 
@@ -246,12 +210,10 @@ export default {
       Display,
       items,
       response,
-      
+
       error,
       log,
-      
 
-      
       startDrag,
       onDelete,
       dragOptions,
